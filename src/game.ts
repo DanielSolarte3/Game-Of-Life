@@ -1,24 +1,27 @@
 import { Board } from "./class/board";
 import util from "./util";
 
+let firstRun: boolean=true;
+
 let canvas: HTMLCanvasElement | null;
 let context: CanvasRenderingContext2D | null;
-let fps = 30;
+let fps = 15;
 
 let canvasX = 400;
 let canvasY = 400;
 
-let board:Board; // Tablero de Celulas
+//let board: Board; // Tablero de Celulas
 
 let tileX: number = 0;
 let tileY: number = 0;
+
+let intervalID: number=0;
 
 function createArray2D(r:number, c:number) {
     let obj = new Array(c);
     for (let i=0; i<c; i++) {
         obj[i] = new Array(r);
     }
-    console.log(obj);
     return obj;
 };
 
@@ -35,13 +38,16 @@ export function start() {
     tileY = Math.floor(canvasY/util.props.columns);
 
     // Crear el tablero
-    board = new Board(createArray2D(util.props.rows,util.props.columns),context);
-
+    const board = Board.getInstance(createArray2D(util.props.rows,util.props.columns),context);
+    
     // Inicializar el tablero
-    board.initializeBoard();
+    if(firstRun){
+        board.initializeBoard();
+        firstRun=false;
+    }
 
     // Ejecutar el bucle principal
-    setInterval(function(){main(tileX,tileY);}, 1000/fps)
+    intervalID=setInterval(function(){main(board,tileX,tileY);}, 1000/fps);
 }
 
 function deleteCanvas() {
@@ -52,7 +58,16 @@ function deleteCanvas() {
     }
 }
 
-function main(tileX: number, tileY:number) {
+export function stop(){
+    clearInterval(intervalID);
+}
+
+export function restart(){
+    firstRun=true;
+    start();
+}
+
+function main(board: Board, tileX: number, tileY:number) {
     deleteCanvas();
     board.drawBoard(tileX,tileY);
 }

@@ -3,12 +3,22 @@ import { Cell } from "./cell";
 
 export class Board{
 
-    board: Cell[][]=[[]];
+    private static instance: Board;
+
+    public board: Cell[][]=[[]];
     context: CanvasRenderingContext2D | null;
 
-    constructor(board: Cell[][]=[[]], context: CanvasRenderingContext2D | null){
+    private constructor(board: Cell[][]=[[]], context: CanvasRenderingContext2D | null){
         this.board=board;
         this.context=context;
+    }
+
+    public static getInstance(board: Cell[][]=[[]], context: CanvasRenderingContext2D | null){
+        if(!Board.instance) {
+            Board.instance = new Board(board, context);
+        }
+
+        return Board.instance;
     }
 
     initializeBoard() {
