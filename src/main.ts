@@ -1,5 +1,5 @@
 import './style.css'
-import { start,  stop, restart} from './game';
+import { start,  stop, restart, save, clean, load} from './game';
 
 let isRunning = false;
 
@@ -11,7 +11,9 @@ window.onload = () => {
       <section class="section-buttons">
         <button id="StartStop">Start</button>
         <button id="Restart">Restart</button>
-        <button onclick="save()">Save</button>
+        <button id="Save">Save</button>
+        <button id="Load">Load</button>
+        <button id="Clean">Clean</button>
       </section>
       <canvas id="screen"></canvas>
     </div>
@@ -19,6 +21,10 @@ window.onload = () => {
 
   document.getElementById('StartStop')?.addEventListener('click', play);
   document.getElementById('Restart')?.addEventListener('click', Restart);
+  document.getElementById('Save')?.addEventListener('click', Save);
+  document.getElementById('Load')?.addEventListener('click', Load);
+  document.getElementById('Clean')?.addEventListener('click', Clean);
+  
 };
 
 function toggleButton(): void {
@@ -46,4 +52,16 @@ function Restart(): void{
   restart();
   isRunning=false;
   toggleButton();
+}
+
+function Save(): void{
+  save();
+}
+
+function Load(): void{
+  load();
+}
+
+function Clean(): void{
+  clean();
 }

@@ -1,4 +1,5 @@
 import { Board } from "./class/board";
+import { CareTaker } from "./class/careTaker";
 import util from "./util";
 
 let firstRun: boolean=true;
@@ -10,12 +11,14 @@ let fps = 15;
 let canvasX = 400;
 let canvasY = 400;
 
-//let board: Board; // Tablero de Celulas
+let board: Board; // Tablero de Celulas
 
 let tileX: number = 0;
 let tileY: number = 0;
 
 let intervalID: number=0;
+
+let careTaker: CareTaker;
 
 function createArray2D(r:number, c:number) {
     let obj = new Array(c);
@@ -38,14 +41,20 @@ export function start() {
     tileY = Math.floor(canvasY/util.props.columns);
 
     // Crear el tablero
-    const board = Board.getInstance(createArray2D(util.props.rows,util.props.columns),context);
+    board = Board.getInstance(createArray2D(util.props.rows,util.props.columns),context);
     
+    // Crear el cuidador de mementos
+    careTaker = new CareTaker(board);
+
     // Inicializar el tablero
     if(firstRun){
         board.initializeBoard();
         firstRun=false;
     }
 
+    // Guardar el estado actual del tablero
+    careTaker.saveBackup();
+    
     // Ejecutar el bucle principal
     intervalID=setInterval(function(){main(board,tileX,tileY);}, 1000/fps);
 }
@@ -60,11 +69,27 @@ function deleteCanvas() {
 
 export function stop(){
     clearInterval(intervalID);
+    board.drawBoard(tileX,tileY);
 }
 
 export function restart(){
     firstRun=true;
     start();
+}
+
+export function save(){
+    careTaker.saveBackup();
+}
+
+export function clean(){
+    board.cleanBoard();
+    board.drawBoard(tileX,tileY);
+}
+
+export function load(){
+    //Por ahora solo se carga el ultimo estado guardado
+    careTaker.undo();
+    board.drawBoard(tileX,tileY);
 }
 
 function main(board: Board, tileX: number, tileY:number) {
